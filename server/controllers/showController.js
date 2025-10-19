@@ -76,6 +76,13 @@ export const addshow = async (req, res)=>{
        if(showsToCreate.length > 0){
         await Show.insertMany(showsToCreate);
        }
+
+    //    Trigger Inngest function to send notification about new show added
+    await inngest.send({
+        name : "app/show.added",
+        data : {MovieTitle : movie.title}
+    })
+
        res.json({success:true , message: 'Show Added successfully'})
 
     }

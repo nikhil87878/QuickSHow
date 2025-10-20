@@ -10,6 +10,7 @@ import bookingRouter from './routes/bookingRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import { stripeWebhooks } from './controllers/stripeWebhooks.js';
+import debugRoutes from './routes/debugRoutes.js';
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -17,8 +18,9 @@ const port = process.env.PORT || 3000;
 (async () => {
   await connectDb();
 
-  // stripe webHooks Routes
-  app.use('/api/stripe', express.raw({ type: 'application/json' }), stripeWebhooks);
+
+  // stripe webHooks Route - explicit POST path using raw body parsing
+  app.post('/api/stripe', express.raw({ type: 'application/json' }), stripeWebhooks);
 
 
   // Middleware
@@ -35,6 +37,8 @@ const port = process.env.PORT || 3000;
   app.use('/api/booking',bookingRouter)
   app.use('/api/admin',adminRoutes)
   app.use('/api/user',userRoutes)
+
+ 
 
 
 

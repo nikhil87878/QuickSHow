@@ -1,6 +1,9 @@
 import Booking from '../models/Booking.js';
 import Show from '../models/Show.js';
 import stripe from 'stripe';
+import { inngest } from '../inngest/index.js';
+
+
 
 //  Function to check availabilty of selected Seat for a movie
 const checkSeatsAvailability = async (showId, selectedSeats)=>{
@@ -93,8 +96,9 @@ export const createBooking = async(req,res)=>{
             expires_at: Math.floor(Date.now() / 1000) + 30 * 60 // 30 minutes from now
 
         })
-        booking.paymentLink = session.url
-        booking.isPaid = true; // Mark as paid since payment succeeded
+    console.log('Stripe session created (debug):', { id: session.id, url: session.url, metadata: session.metadata });
+    booking.paymentLink = session.url
+        // booking.isPaid = true; // Mark as paid since payment succeeded
         await booking.save();
 
         // Run Inngest function to release seats and delete booking after 10 minutes if payment is not made

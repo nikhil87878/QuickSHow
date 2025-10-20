@@ -10,7 +10,7 @@ import bookingRouter from './routes/bookingRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import { stripeWebhooks } from './controllers/stripeWebhooks.js';
-import debugRoutes from './routes/debugRoutes.js';
+
 
 const app = express();
 const port = process.env.PORT || 3000;

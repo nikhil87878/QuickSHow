@@ -6,18 +6,26 @@ import mongoose from 'mongoose';
 export const stripeWebhooks = async (req, res) => {
     const sig = req.headers['stripe-signature'];
     console.log('Stripe webhook received - signature:', sig);
-    const rawBody = Buffer.isBuffer(req.body) ? req.body.toString('utf8') : JSON.stringify(req.body);
+        console.log('req.body type:', Object.prototype.toString.call(req.body));
+        const rawBody = Buffer.isBuffer(req.body) ? req.body.toString('utf8') : JSON.stringify(req.body);
     console.log('Stripe webhook raw body (truncated):', rawBody.slice(0, 1000));
 
     const stripeInstance = new Stripe(process.env.STRIPE_SECRET_KEY);
 
-    let event;
-    try {
-        event = stripeInstance.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
-    } catch (err) {
-        console.error('Webhook signature verification failed:', err.message);
-        return res.status(400).send(`Webhook Error: ${err.message}`);
-    }
+        let event;
+        try {
+            // Defensive: trim whitespace/newlines which commonly appear when copying the secret
+            const rawSecret = process.env.STRIPE_WEBHOOK_SECRET || '';
+            const trimmedSecret = rawSecret.trim();
+            if (rawSecret !== trimmedSecret) {
+                console.warn('STRIPE_WEBHOOK_SECRET contained leading/trailing whitespace; trimming before verification');
+            }
+
+            event = stripeInstance.webhooks.constructEvent(req.body, sig, trimmedSecret);
+        } catch (err) {
+            console.error('Webhook signature verification failed:', err.message);
+            return res.status(400).send(`Webhook Error: ${err.message}`);
+        }
 
     try {
         console.log('Stripe event type:', event.type);

@@ -20,7 +20,7 @@ const port = process.env.PORT || 3000;
 
 
   // stripe webHooks Route - explicit POST path using raw body parsing
-  app.post('/api/stripe', express.raw({ type: 'application/json' }), stripeWebhooks);
+  app.use('/api/stripe', express.raw({ type: 'application/json' }), stripeWebhooks);
 
 
   // Middleware

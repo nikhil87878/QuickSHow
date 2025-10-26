@@ -96,7 +96,7 @@ export const createBooking = async(req,res)=>{
             expires_at: Math.floor(Date.now() / 1000) + 30 * 60 // 30 minutes from now
 
         })
-    console.log('Stripe session created (debug):', { id: session.id, url: session.url, metadata: session.metadata });
+    // console.log('Stripe session created (debug):', { id: session.id, url: session.url, metadata: session.metadata });
     booking.paymentLink = session.url
         // booking.isPaid = true; // Mark as paid since payment succeeded
         await booking.save();

@@ -64,7 +64,7 @@ const releaseSeatsAndDeleteBooking = inngest.createFunction(
             const {bookingId} = event.data.bookingId;
             console.log('Checking payment status for bookingId:', bookingId);
             const bookingData = await Booking.findById(bookingId);
-            if(bookingData && !bookingData.isPaid){
+            if(!bookingData.isPaid){
                 // release seats
                 const showData = await Show.findById(bookingData.show);
                 bookingData.bookedSeats.forEach((seat)=>{

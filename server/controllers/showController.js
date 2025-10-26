@@ -2,6 +2,7 @@ import axios from "axios"
 import Movie from "../models/Movie.js";
 import Show from "../models/Show.js";
 import { err } from "inngest/types";
+import { inngest } from "../inngest/inngest.js";
 
 // API to get now playing movies from TMDB API
 export const getNowPlayingMovies = async (req, res)=>{

@@ -2,7 +2,6 @@ import { Inngest } from "inngest";
 import User from "../models/User.js";
 import Booking from "../models/Booking.js";
 import Show from "../models/Show.js";
-import { model } from "mongoose";
 import sendEmail from "../configs/nodeMailer.js";
 
 // Create a client to send and receive events
@@ -14,10 +13,10 @@ const syncUserCreation = inngest.createFunction(
     {id:'sync-user-from-clerk'},
     {event : 'clerk/user.created'},
     async ({event})=>{
-        const {id,first_name,last_name,email_addresses,image_url} = event.data;
+        const {id,first_name,last_name,email_addresses,image_url,data} = event.data;
         const userData = {
             _id : id,
-            email :email_addresses[0].email_addresses,
+            email :data.email_addresses.email_address,
             name: first_name + " " + last_name,
             image : image_url
         }
@@ -64,7 +63,7 @@ const releaseSeatsAndDeleteBooking = inngest.createFunction(
             const {bookingId} = event.data.bookingId;
             console.log('Checking payment status for bookingId:', bookingId);
             const bookingData = await Booking.findById(bookingId);
-            if(!bookingData.isPaid){
+            if(!bookingData?.isPaid){
                 // release seats
                 const showData = await Show.findById(bookingData.show);
                 bookingData.bookedSeats.forEach((seat)=>{

@@ -57,11 +57,12 @@ const releaseSeatsAndDeleteBooking = inngest.createFunction(
     {id:'release-seats-delete-booking'},
     {event : 'app/checkpayment'}, 
     async ({event,step})=>{
-        const tenMinutesLater = new Date(Date.now() + 10 * 60 * 1000);
+        const tenMinutesLater = new Date(Date.now() + 1 * 60 * 1000);
         await step.sleepUntil('Wait-for-10-minutes', tenMinutesLater);
 
         await step.run('Check-payment-status', async () => {
             const {bookingId} = event.data.bookingId;
+            console.log('Checking payment status for bookingId:', bookingId);
             const bookingData = await Booking.findById(bookingId);
             if(bookingData && !bookingData.isPaid){
                 // release seats

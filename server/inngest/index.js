@@ -93,7 +93,7 @@ const sendBookingEmail = inngest.createFunction(
             populate : {
                 path : 'Movie',
                 model   : 'Movie'
-            }}).populate('User');
+            }}).populate('user');
 
             await sendEmail({
                 to : booking.user.email,

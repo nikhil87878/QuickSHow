@@ -94,19 +94,31 @@ const sendBookingEmail = inngest.createFunction(
                 model   : 'Movie'
             }}).populate('user');
 
-            await sendEmail({
-                to : booking.user.email,
-                subject : `Booking Confirmation - ${booking.show.Movie.title}`,
-                body : `<h1>Your booking is confirmed!</h1>
-                <p>Booking ID: ${booking._id}</p>
-                <p>Movie: ${booking.show.Movie.title}</p>
-                <p>Showtime: ${booking.show.startTime}</p>
-                <p>Seats: ${booking.bookedSeats.join(', ')}</p>
-                <p>Thank you for booking with us!</p>
-                `  
+        if (!booking) {
+            console.warn('sendBookingEmail: booking not found for id', bookingId);
+            return;
+        }
+        if (!booking.user || !booking.user.email) {
+            console.warn('sendBookingEmail: user or user.email not found for booking', bookingId);
+            return;
+        }
+        if (!booking.show || !booking.show.Movie) {
+            console.warn('sendBookingEmail: show or Movie not populated for booking', bookingId);
+            return;
+        }
 
-            })
+        await sendEmail({
+            to : booking.user.email,
+            subject : `Booking Confirmation - ${booking.show.Movie.title}`,
+            body : `<h1>Your booking is confirmed!</h1>
+            <p>Booking ID: ${booking._id}</p>
+            <p>Movie: ${booking.show.Movie.title}</p>
+            <p>Showtime: ${booking.show.startTime}</p>
+            <p>Seats: ${booking.bookedSeats.join(', ')}</p>
+            <p>Thank you for booking with us!</p>
+            `  
         });
+    });
 
 
 // Ingest function to send email remainder 
